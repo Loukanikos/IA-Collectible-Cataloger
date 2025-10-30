@@ -1,4 +1,3 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
 import type { CatalogData } from '../types';
 
@@ -25,35 +24,39 @@ export const generateCatalogData = async (
   };
 
   const textPart = {
-    text: `Analyze the following item description and image to catalog it.\n\nDescription: ${description}`,
+    text: `Analise a descrição e a imagem do item a seguir para catalogá-lo.\n\nDescrição: ${description}`,
   };
 
   const response = await ai.models.generateContent({
     model: model,
     contents: { parts: [imagePart, textPart] },
     config: {
-      systemInstruction: `You are an expert cataloger for collectibles. Based on the user's description and image, create a concise title, a detailed description, and a list of relevant tags (like hashtags) for a NoSQL database. The tags should be short, relevant keywords. Return the result as a valid JSON object.`,
+      systemInstruction: `Você é um catalogador especialista em colecionáveis. Com base na descrição e na imagem do usuário, crie um título conciso, uma descrição detalhada, uma estimativa de valor monetário (ex: 'R$ 50,00') e uma lista de tags relevantes (como hashtags) para um banco de dados NoSQL. As tags devem ser palavras-chave curtas e relevantes. Retorne o resultado como um objeto JSON válido.`,
       responseMimeType: "application/json",
       responseSchema: {
         type: Type.OBJECT,
         properties: {
           title: {
             type: Type.STRING,
-            description: "A concise and descriptive title for the collectible item."
+            description: "Um título conciso e descritivo para o item colecionável."
           },
           detailedDescription: {
             type: Type.STRING,
-            description: "A detailed but professional description of the item, including key features mentioned by the user or visible in the image."
+            description: "Uma descrição detalhada, mas profissional, do item, incluindo características principais mencionadas pelo usuário ou visíveis na imagem."
+          },
+          value: {
+            type: Type.STRING,
+            description: "Uma estimativa do valor monetário do item, formatado como uma string (ex: 'R$ 100,00')."
           },
           tags: {
             type: Type.ARRAY,
-            description: "An array of short, relevant keywords or hashtags for categorization.",
+            description: "Uma lista de palavras-chave curtas e relevantes ou hashtags para categorização.",
             items: {
               type: Type.STRING
             }
           }
         },
-        required: ["title", "detailedDescription", "tags"]
+        required: ["title", "detailedDescription", "value", "tags"]
       },
     }
   });

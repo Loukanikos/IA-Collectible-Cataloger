@@ -1,5 +1,7 @@
 {
-  "name": "AI Collectible Cataloger",
-  "description": "An intelligent system for cataloging collectibles. Simply upload an image and provide a description, and the AI will generate a structured catalog entry with a title, detailed description, and relevant tags.",
-  "requestFramePermissions": []
+  "name": "Catalogador de Colecionáveis com IA",
+  "description": "Um sistema inteligente para catalogar colecionáveis. Basta enviar uma imagem e fornecer uma descrição, e a IA irá gerar uma entrada de catálogo estruturada com título, descrição detalhada e tags relevantes.",
+  "requestFramePermissions": [
+    "camera"
+  ]
 }
