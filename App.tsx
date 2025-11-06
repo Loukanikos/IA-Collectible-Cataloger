@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import type { CatalogData, SavedCatalogItem } from './types';
 import { generateCatalogData } from './services/geminiService';
 import ImageUploader from './components/ImageUploader';
@@ -10,6 +10,7 @@ import CatalogList from './components/CatalogList';
 import CatalogDetailView from './components/CatalogDetailView';
 
 type View = 'catalog' | 'list';
+const LOCAL_STORAGE_KEY = 'catalogedItems';
 
 const App: React.FC = () => {
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -22,9 +23,25 @@ const App: React.FC = () => {
   const [saveSuccess, setSaveSuccess] = useState<boolean>(false);
   
   const [currentView, setCurrentView] = useState<View>('list');
-  const [catalogedItems, setCatalogedItems] = useState<SavedCatalogItem[]>([]);
+  const [catalogedItems, setCatalogedItems] = useState<SavedCatalogItem[]>(() => {
+    try {
+      const savedItems = localStorage.getItem(LOCAL_STORAGE_KEY);
+      return savedItems ? JSON.parse(savedItems) : [];
+    } catch (e) {
+      console.error("Falha ao carregar itens do localStorage:", e);
+      return [];
+    }
+  });
   const [selectedItem, setSelectedItem] = useState<SavedCatalogItem | null>(null);
   const [selectedItemIndex, setSelectedItemIndex] = useState<number | null>(null);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(catalogedItems));
+    } catch (e) {
+      console.error("Falha ao salvar itens no localStorage:", e);
+    }
+  }, [catalogedItems]);
 
 
   const handleImageChange = (file: File | null) => {
